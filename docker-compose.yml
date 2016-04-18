@@ -1,49 +1,49 @@
 application:
-    build: code
-    volumes:
-        - ./symfony:/var/www/symfony
-        - ./logs/symfony:/var/www/symfony/app/logs
-    tty: true
+  build: code
+  volumes:
+    - ./symfony:/var/www/symfony
+    - ./logs/symfony:/var/www/symfony/app/logs
+  tty: true
 db:
-    image: mysql:5.5
-    ports:
-      - 3306:3306
-    volumes:
-      - ./mysql/init-scripts:/docker-entrypoint-initdb.d
-    environment:
-        MYSQL_ROOT_PASSWORD: root
+  image: mysql:5.5
+  ports:
+    - 3306:3306
+  volumes:
+    - ./mysql/init-scripts:/docker-entrypoint-initdb.d
+  environment:
+    MYSQL_ROOT_PASSWORD: root
 mailcatcher:
   image: jeanberu/mailcatcher
   ports:
     - 1025:1025
     - 1080:1080
 php:
-    build: php-fpm
-    ports:
-        - 9000:9000
-    volumes_from:
-        - application
-    links:
-        - db
-        - mailcatcher
+  build: php-fpm
+  ports:
+    - 9000:9000
+  volumes_from:
+    - application
+  links:
+    - db
+    - mailcatcher
 nginx:
-    build: nginx
-    ports:
-        - 80:80
-    links:
-        - php
-    volumes_from:
-        - application
-    volumes:
-        - ./logs/nginx/:/var/log/nginx
+  build: nginx
+  ports:
+    - 80:80
+  links:
+    - php
+  volumes_from:
+    - application
+  volumes:
+    - ./logs/nginx/:/var/log/nginx
 elk:
-    image: willdurand/elk
-    ports:
-        - 81:80
-    volumes:
-        - ./elk/logstash:/etc/logstash
-        - ./elk/logstash/patterns:/opt/logstash/patterns
-    volumes_from:
-        - application
-        - php
-        - nginx
+  image: willdurand/elk
+  ports:
+    - 81:80
+  volumes:
+    - ./elk/logstash:/etc/logstash
+    - ./elk/logstash/patterns:/opt/logstash/patterns
+  volumes_from:
+    - application
+    - php
+    - nginx
