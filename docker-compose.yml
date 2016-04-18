@@ -12,6 +12,11 @@ db:
       - ./mysql/init-scripts:/docker-entrypoint-initdb.d
     environment:
         MYSQL_ROOT_PASSWORD: root
+mailcatcher:
+  image: jeanberu/mailcatcher
+  ports:
+    - 1025:1025
+    - 1080:1080
 php:
     build: php-fpm
     ports:
@@ -20,6 +25,7 @@ php:
         - application
     links:
         - db
+        - mailcatcher
 nginx:
     build: nginx
     ports:
